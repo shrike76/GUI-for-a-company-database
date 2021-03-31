@@ -1,6 +1,6 @@
 package sample;
 
-import com.jfoenix.controls.JFXButton;
+//import com.jfoenix.controls.JFXButton;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -36,7 +36,7 @@ public class Controller implements Initializable {
     final String username = "";
     final String password = "";
     //URL to AWS Database
-    final String AWS = "jdbc:mysql://" + hostname + ":" + port + "/" + dbname + "?user=" + username + "&password=" + password;
+    final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
