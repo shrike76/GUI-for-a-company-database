@@ -27,7 +27,7 @@ public class MainmenuController {
     ObservableList<String> items = FXCollections.observableArrayList();
 
     //displays all table names of database on initialize
-    public void initialize() {
+    /*public void initialize() {
         ResultSet rs = null;
         Statement stmt = null;
         try{
@@ -42,5 +42,5 @@ public class MainmenuController {
         catch (SQLException e){
             System.out.println("print error");
         }
-    }
+    }*/
 }

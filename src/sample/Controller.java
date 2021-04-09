@@ -48,38 +48,27 @@ public class Controller implements Initializable {
     private Parent root;
 
     //handles fxml scene switches. code borrowed from https://www.reddit.com/r/javahelp/comments/46v78j/javafx_changing_between_fxml_scenes_on_press_of/
-    @FXML
-    private void sceneHandler() throws IOException {
-        System.out.println("Scene changing...");
-        root = FXMLLoader.load(getClass().getResource("mainmenu.fxml"));
-        window.setScene(new Scene(root));
-        window.show();
+
+
+    public void login() throws IOException {
+        Parent root2 = FXMLLoader.load(getClass().getResource("mainmenu.fxml"));
+        Stage stage = (Stage) Log.getScene().getWindow();
+        Scene scene = new Scene(root2);
+        stage.setScene(scene);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        Log.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-
                 try
                 {
                     Connection conn = DriverManager.getConnection(AWS);
                     Statement stmt = conn.createStatement();
                     System.out.println("CONNECTED");
-                    //Parent root = FXMLLoader.load(getClass().getResource("MainmenuController.fxml"));
-                    //window.setScene(new Scene(root));
-                    //window.show();
-                    sceneHandler();
-
                 }
                 catch(Exception ex)
                 {
                     System.out.println("ERROR: " + ex.getMessage());
                 }
-
             }
-        });
-    }
-}
+        }
+

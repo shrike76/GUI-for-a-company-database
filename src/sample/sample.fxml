@@ -13,6 +13,6 @@
             <TextField fx:id="UsernameBox" prefWidth="100"/>
         <Label text="Password"/>
             <TextField fx:id="PasswordBox" prefWidth="100"/>
-        <Button fx:id="Log" text="Login" prefWidth="200"/>
+        <Button fx:id="Log" text="Login" prefWidth="200" onAction="#login"/>
     </VBox>
 </GridPane>
