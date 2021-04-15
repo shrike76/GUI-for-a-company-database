@@ -14,33 +14,34 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.net.URL;
+import java.sql.*;
+import java.util.ResourceBundle;
 
-public class MainmenuController {
+public class MainmenuController implements Initializable {
 
+
+    final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
     @FXML
     ListView<String> ListTable;
 
     ObservableList<String> items = FXCollections.observableArrayList();
 
     //displays all table names of database on initialize
-    /*public void initialize() {
-        ResultSet rs = null;
-        Statement stmt = null;
-        try{
-            //PreparedStatement stmt = conn.prepareStatement("SELECT DBIceCream FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='DBIceCream'");
-            rs = stmt.executeQuery("SELECT DBIceCream FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='DBIceCream'");
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        try {
+            Connection conn = DriverManager.getConnection(AWS);
+            Statement stmt = conn.createStatement();
+            System.out.println("CONNECTED");
+            ResultSet rs;
+            rs = stmt.executeQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG='IceCreamDB'");
             while (rs.next()) {
                 items.add(rs.getString(1));
-                System.out.println(rs.getString(1));
-            }
-        }
 
-        catch (SQLException e){
-            System.out.println("print error");
+                ListTable.setItems(items);
+            }
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
         }
-    }*/
+    }
 }

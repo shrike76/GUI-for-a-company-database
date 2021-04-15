@@ -5,9 +5,14 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
+<?import javafx.collections.FXCollections?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml" fx:controller="sample.MainmenuController">
    <children>
-      <ListView fx:id="ListTable" layoutX="14.0" layoutY="13.0" prefHeight="380.0" prefWidth="300.0" />
+      <ListView fx:id="ListTable" layoutX="14.0" layoutY="13.0" prefHeight="380.0" prefWidth="300.0" >
+         <items>
+            <FXCollections fx:factory="observableArrayList" fx:id="processingList"></FXCollections>
+         </items>
+      </ListView>
       <Button fx:id="SelectButton" layoutX="425.0" layoutY="29.0" mnemonicParsing="false" text="Select" />
       <Button fx:id="ExitButton" layoutX="517.0" layoutY="29.0" mnemonicParsing="false" text="Exit" />
    </children>

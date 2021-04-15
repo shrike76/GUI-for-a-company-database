@@ -62,7 +62,6 @@ public class Controller implements Initializable {
                 try
                 {
                     Connection conn = DriverManager.getConnection(AWS);
-                    Statement stmt = conn.createStatement();
                     System.out.println("CONNECTED");
                 }
                 catch(Exception ex)
@@ -71,4 +70,3 @@ public class Controller implements Initializable {
                 }
             }
         }
-
