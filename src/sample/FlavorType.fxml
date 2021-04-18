@@ -7,14 +7,14 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="406.0" prefWidth="811.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.FlavorType">
+<AnchorPane prefHeight="406.0" prefWidth="811.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.FlavortypeController">
     <TableView fx:id="tv1" layoutX="14.0" layoutY="14.0" prefHeight="290.0" prefWidth="496.0" />
    <Button layoutX="31.0" layoutY="341.0" mnemonicParsing="false" onAction="#Add" text="Create" />
    <Button layoutX="235.0" layoutY="341.0" mnemonicParsing="false" onAction="#Update" text="Update" />
    <Button fx:id="ButtonExit" layoutX="455.0" layoutY="341.0" mnemonicParsing="false" onAction="#Exit" text="Exit" />
    <TextField fx:id="FlavorTypeTextfield" layoutX="628.0" layoutY="26.0" />
    <TextField fx:id="PriceTextfield" layoutX="628.0" layoutY="71.0" />
-   <CheckBox fx:id="IsActiveCheckbox" layoutX="628.0" layoutY="114.0" mnemonicParsing="false" text="Is Active" />
+   <CheckBox fx:id="IsActiveCheckbox" layoutX="628.0" layoutY="114.0" mnemonicParsing="false" selected="true" text="Is Active" />
    <Label layoutX="538.0" layoutY="30.0" text="Flavor Type" />
    <Label layoutX="538.0" layoutY="75.0" text="Price" />
 </AnchorPane>

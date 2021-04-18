@@ -13,25 +13,21 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class FlavorType implements Initializable {
+public class SizeController implements Initializable {
+    public Button ButtonExit;
+    public TextField SizeTextfield;
+    public TextField SizePriceTextfield;
+    public CheckBox IsActiveCheckbox;
+    public TableView tv1;
 
     final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
-
-    public TableView tv1;
-    public ObservableList<ObservableList> data;
-    public TextField FlavorTypeTextfield;
-    public TextField PriceTextfield;
-    public CheckBox IsActiveCheckbox;
-    public Button ButtonExit;
-
     Connection conn;
+    public ObservableList<ObservableList> data;
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -43,13 +39,12 @@ public class FlavorType implements Initializable {
         }
     }
 
-    //code to view table into a listview. can be replicated everywhere.
     public void view() {
         try {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT FT.flavortypeid, FT.flavor_type, FT.flavorpriceid, FP.flavor_price, FT.Active FROM FlavorType FT LEFT JOIN FlavorPrice FP\n" +
-                    "ON FT.flavorpriceid = FP.flavorpriceid");
+            ResultSet rs = stmt.executeQuery("SELECT S.sizeid, S.sizepriceid, S.size, SP.size_price, S.Active FROM Size S LEFT JOIN SizePrice SP\n" +
+                    "ON S.sizepriceid = SP.sizepriceid");
             if (tv1.getItems().isEmpty()) {
                 for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
                     //We are using non property style for making dynamic table. Borrowed from a CIS 3368 assignment by Colton Weber (the guy writing this code) https://github.com/shrike76/Student-Database-using-Java-MySQL-and-AWS
@@ -89,22 +84,20 @@ public class FlavorType implements Initializable {
 
     public void Add() {
         try {
-            int flavorpriceid = 0;
-
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
-            PreparedStatement pstmt = conn.prepareStatement("INSERT INTO FlavorPrice (flavor_price) Values (?)");
+            PreparedStatement pstmt = conn.prepareStatement("INSERT INTO SizePrice (size_price) Values (?)");
 
-            pstmt.setBigDecimal(1, new BigDecimal(PriceTextfield.getText()));
+            pstmt.setBigDecimal(1, new BigDecimal(SizePriceTextfield.getText()));
             pstmt.executeUpdate();
 
-            ResultSet rs = stmt.executeQuery("SELECT MAX(flavorpriceid) flavorpriceid FROM FlavorPrice");
+            ResultSet rs = stmt.executeQuery("SELECT MAX(sizepriceid) ID FROM SizePrice");
             rs.next();
-            flavorpriceid = rs.getInt("flavorpriceid");
+            int ID = rs.getInt("ID");
 
-            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO FlavorType (flavorpriceid, flavor_type, Active) Values (?, ?, ?)");
-            pstmt2.setInt(1, flavorpriceid);
-            pstmt2.setString(2, FlavorTypeTextfield.getText());
+            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO Size (sizepriceid, size, Active) Values (?, ?, ?)");
+            pstmt2.setInt(1, ID);
+            pstmt2.setString(2, SizeTextfield.getText());
             pstmt2.setBoolean(3, IsActiveCheckbox.isSelected());
             pstmt2.executeUpdate();
             view();
@@ -114,6 +107,23 @@ public class FlavorType implements Initializable {
         }
     }
 
+    public void Update(ActionEvent actionEvent) throws SQLException {
+        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+
+        String ID1 = Tablename.get(0);
+        String ID2 = Tablename.get(2);
+
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE Size SET size = ?, Active = ? WHERE sizeid = " + ID1 );
+        pstmt.setString(1, SizeTextfield.getText());
+        pstmt.setBoolean(2, IsActiveCheckbox.isSelected());
+        pstmt.executeUpdate();
+
+        PreparedStatement pstmt2 = conn.prepareStatement("UPDATE Size SET size_price = ? WHERE sizepriceid = " + ID2);
+        pstmt2.setBigDecimal(1, new BigDecimal(SizePriceTextfield.getText()));
+        pstmt.executeUpdate();
+        view();
+    }
+
     public void Exit(ActionEvent actionEvent) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("mainmenu.fxml"));
         Scene scene = new Scene(root);
@@ -121,20 +131,4 @@ public class FlavorType implements Initializable {
         stage.setScene(scene);
     }
 
-    public void Update(ActionEvent actionEvent) throws SQLException {
-        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
-
-        String flavortypeid = Tablename.get(0);
-        String flavorpriceid = Tablename.get(2);
-
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE FlavorType SET flavor_type = ?, Active = ? WHERE flavortypeid = " + flavortypeid );
-        pstmt.setString(1, FlavorTypeTextfield.getText());
-        pstmt.setBoolean(2, IsActiveCheckbox.isSelected());
-        pstmt.executeUpdate();
-
-        PreparedStatement pstmt2 = conn.prepareStatement("UPDATE FlavorType SET flavor_price = ? WHERE flavorpriceid = " + flavorpriceid);
-        pstmt2.setBigDecimal(1, new BigDecimal(PriceTextfield.getText()));
-        pstmt.executeUpdate();
-        view();
-    }
 }

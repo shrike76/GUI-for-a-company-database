@@ -12,16 +12,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
-public class VendorController implements Initializable {
+public class CustomerController implements Initializable {
 
-    final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
     public TextField FlavorTypeTextfield;
     public TextField PriceTextfield;
     public CheckBox IsActiveCheckbox;
@@ -37,9 +35,10 @@ public class VendorController implements Initializable {
     public ComboBox ZipcodeComboBox;
     public ComboBox StreetComboBox;
 
+    final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
     Connection conn;
     public ObservableList<ObservableList> data;
-    
+
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             conn = DriverManager.getConnection(AWS);
@@ -84,15 +83,15 @@ public class VendorController implements Initializable {
         try {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT V.vendorid,V.first_name,V.last_name,V.phone,V.email,V.vendoraddressid,CO.countryid,CO.country_name,S.stateid,S.state_name,C.cityid,C.city_name,Z.zipcodeid,Z.zipcode_number,SL.streetid,SL.street_name, VS.vendor_status Active\n" +
-                    "FROM Vendor V LEFT JOIN VendorAddress VA\n" +
-                    "ON V.vendoraddressid = VA.vendoraddressid\n" +
-                    "    LEFT JOIN CountryList CO ON VA.countryid = CO.countryid\n" +
-                    "    LEFT JOIN StateList S ON VA.stateid = S.stateid\n" +
-                    "    LEFT JOIN CityList C ON VA.cityid = C.cityid\n" +
-                    "    LEFT JOIN ZipcodeList Z ON VA.zipcodeid = Z.zipcodeid\n" +
-                    "    LEFT JOIN StreetList SL ON VA.streetid = SL.streetid\n" +
-                    "    LEFT JOIN VendorStatus VS ON V.vendorid = VS.vendorid");
+            ResultSet rs = stmt.executeQuery("SELECT CU.customerid,CU.first_name,CU.last_name,CU.phone,CU.email,CU.customeraddressid,CO.countryid,CO.country_name,S.stateid,S.state_name,C.cityid,C.city_name,Z.zipcodeid,Z.zipcode_number,SL.streetid,SL.street_name, CS.customer_status Active\n" +
+                    "FROM Customer CU LEFT JOIN CustomerAddress CA\n" +
+                    "ON CU.customeraddressid = CA.customeraddressid\n" +
+                    "    LEFT JOIN CountryList CO ON CA.countryid = CO.countryid\n" +
+                    "    LEFT JOIN StateList S ON CA.stateid = S.stateid\n" +
+                    "    LEFT JOIN CityList C ON CA.cityid = C.cityid\n" +
+                    "    LEFT JOIN ZipcodeList Z ON CA.zipcodeid = Z.zipcodeid\n" +
+                    "    LEFT JOIN StreetList SL ON CA.streetid = SL.streetid\n" +
+                    "    LEFT JOIN CustomerStatus CS ON CU.customerid = CS.customerid");
             if (tv1.getItems().isEmpty()) {
                 for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
                     //We are using non property style for making dynamic table. Borrowed from a CIS 3368 assignment by Colton Weber (the guy writing this code) https://github.com/shrike76/Student-Database-using-Java-MySQL-and-AWS
@@ -136,7 +135,7 @@ public class VendorController implements Initializable {
 
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
-            PreparedStatement pstmt = conn.prepareStatement("INSERT INTO VendorAddress (countryid, stateid, cityid, zipcodeid, streetid)\n" +
+            PreparedStatement pstmt = conn.prepareStatement("INSERT INTO CustomerAddress (countryid, stateid, cityid, zipcodeid, streetid)\n" +
                     "Values (?, ?, ?, ?, ?)");
 
             pstmt.setInt(1, GetID(CountryComboBox.getValue().toString()));
@@ -147,11 +146,11 @@ public class VendorController implements Initializable {
 
             pstmt.executeUpdate();
 
-            ResultSet rs = stmt.executeQuery("SELECT MAX(vendoraddressid) ID FROM VendorAddress");
+            ResultSet rs = stmt.executeQuery("SELECT MAX(customeraddressid) ID FROM CustomerAddress");
             rs.next();
             int ID = rs.getInt("ID");
 
-            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO Vendor (vendoraddressid, first_name, last_name, phone, email)\n" +
+            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO Customer (customeraddressid, first_name, last_name, phone, email)\n" +
                     "Values (?, ?, ?, ?, ?)");
             pstmt2.setInt(1, ID);
             pstmt2.setString(2, FirstNameTextField.getText());
@@ -160,10 +159,10 @@ public class VendorController implements Initializable {
             pstmt2.setString(5, EmailTextField.getText());
             pstmt2.executeUpdate();
 
-            ResultSet rs2 = stmt.executeQuery("SELECT MAX(vendorid) ID FROM Vendor");
+            ResultSet rs2 = stmt.executeQuery("SELECT MAX(customerid) ID FROM Customer");
             rs2.next();
             int ID2 = rs2.getInt("ID");
-            PreparedStatement pstmt3 = conn.prepareStatement("INSERT INTO VendorStatus(vendorid, vendor_status) Values (?,?)");
+            PreparedStatement pstmt3 = conn.prepareStatement("INSERT INTO CustomerStatus(customerid, customer_status) Values (?,?)");
             pstmt3.setInt(1, ID2);
             pstmt3.setString(2, IsActiveCheckbox.isSelected() ? "true":"false");
             pstmt3.executeUpdate();
@@ -177,7 +176,7 @@ public class VendorController implements Initializable {
 
 
     public void Update(ActionEvent actionEvent) throws SQLException {
-       /* ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+        /*ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
 
         String flavortypeid = Tablename.get(0);
         String flavorpriceid = Tablename.get(2);
@@ -205,5 +204,4 @@ public class VendorController implements Initializable {
         int a = Integer.parseInt(number);
         return a;
     }
-
 }

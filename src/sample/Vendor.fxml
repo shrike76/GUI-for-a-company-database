@@ -15,7 +15,6 @@
     <Button fx:id="ButtonExit" layoutX="455.0" layoutY="341.0" mnemonicParsing="false" onAction="#Exit" text="Exit" />
     <TextField fx:id="FirstNameTextField" layoutX="628.0" layoutY="26.0" />
     <TextField fx:id="LastNameTextField" layoutX="628.0" layoutY="63.0" />
-    <CheckBox fx:id="IsActiveCheckbox" layoutX="638.0" layoutY="358.0" mnemonicParsing="false" text="Is Active" />
     <Label layoutX="534.0" layoutY="30.0" text="First Name" />
     <Label layoutX="535.0" layoutY="67.0" text="Last Name" />
    <Label layoutX="533.0" layoutY="104.0" text="Phone" />
@@ -32,4 +31,5 @@
    <ComboBox fx:id="CityComboBox" layoutX="628.0" layoutY="249.0" prefWidth="150.0" />
    <ComboBox fx:id="ZipcodeComboBox" layoutX="628.0" layoutY="283.0" prefWidth="150.0" />
    <ComboBox fx:id="StreetComboBox" layoutX="628.0" layoutY="320.0" prefWidth="150.0" />
+    <CheckBox fx:id="IsActiveCheckbox" layoutX="638.0" layoutY="358.0" mnemonicParsing="false" selected="true" text="Is Active" />
 </AnchorPane>
