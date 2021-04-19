@@ -5,26 +5,24 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
-public class ToppingController implements Initializable {
+public class EquipmentController implements Initializable {
     public TableView tv1;
     public Button ButtonExit;
     public TextField ToppingTextField;
     public TextField ToppingPriceTextField;
     public CheckBox IsActiveCheckbox;
+    public TextField ToppingPriceTextField1;
+    public ComboBox EquipmentConditionComboBox;
 
+    private String _vendorid;
     final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
     Connection conn;
     public ObservableList<ObservableList> data;
@@ -33,18 +31,32 @@ public class ToppingController implements Initializable {
         try {
             conn = DriverManager.getConnection(AWS);
             System.out.println("CONNECTED");
-            view();
+
+            Statement stmt = conn.createStatement();
+
+            ResultSet rs = stmt.executeQuery("SELECT * FROM EquipmentCondition");
+            while (rs.next()) {
+                EquipmentConditionComboBox.getItems().addAll(rs.getString("equipment_condition") +"-"+ rs.getString("equipmentconditionid"));
+            }
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
+
+    }
+
+    public void Initdata(String vendorid){
+        _vendorid = vendorid;
+        view();
     }
 
     public void view() {
         try {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT T.toppingid, T.toppingpriceid, T.topping, TP.topping_price, T.Active FROM Topping T LEFT JOIN ToppingPrice TP\n" +
-                    "ON T.toppingpriceid = TP.toppingpriceid");
+            ResultSet rs = stmt.executeQuery("SELECT E.equipmentid, E.vendorid, E.equipment_type, E.equipment_name, E.equipment_price, EC.equipment_condition, E.Active FROM Equipment E LEFT JOIN EquipmentCondition EC\n" +
+                    "ON E.equipmentconditionid = EC.equipmentconditionid\n" +
+                    "WHERE E.vendorid = " + _vendorid);
+            System.out.println(_vendorid);
             if (tv1.getItems().isEmpty()) {
                 for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
                     //We are using non property style for making dynamic table. Borrowed from a CIS 3368 assignment by Colton Weber (the guy writing this code) https://github.com/shrike76/Student-Database-using-Java-MySQL-and-AWS
@@ -56,7 +68,7 @@ public class ToppingController implements Initializable {
                         }
                     });
                     tv1.getColumns().addAll(col);
-                    System.out.println("Column [" + i + "] ");
+                    //System.out.println("Column [" + i + "] ");
                 }
             }
 
@@ -71,7 +83,7 @@ public class ToppingController implements Initializable {
                     }
                     row.add(value);
                 }
-                System.out.println("Row [1] added " + row);
+                //System.out.println("Row [1] added " + row);
                 data.add(row);
 
             }
@@ -82,59 +94,12 @@ public class ToppingController implements Initializable {
         }
     }
 
-    public void Add() {
-        try {
-            data = FXCollections.observableArrayList();
-            Statement stmt = conn.createStatement();
-            PreparedStatement pstmt = conn.prepareStatement("INSERT INTO ToppingPrice (topping_price) Values (?)");
-
-            pstmt.setBigDecimal(1, new BigDecimal(ToppingPriceTextField.getText()));
-            pstmt.executeUpdate();
-
-            ResultSet rs = stmt.executeQuery("SELECT MAX(toppingpriceid) ID FROM ToppingPrice");
-            rs.next();
-            int ID = rs.getInt("ID");
-
-            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO Topping (toppingpriceid, topping, Active) Values (?, ?, ?)");
-            pstmt2.setInt(1, ID);
-            pstmt2.setString(2, ToppingTextField.getText());
-            pstmt2.setBoolean(3, IsActiveCheckbox.isSelected());
-            pstmt2.executeUpdate();
-            view();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Error on Building Data");
-        }
+    public void Add(ActionEvent actionEvent) {
     }
 
-    public void Update(ActionEvent actionEvent) throws SQLException {
-        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
-        Statement stmt = conn.createStatement();
-
-        //toppingpriceid
-        String ID = Tablename.get(0);
-
-        PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO ToppingPrice (topping_price) Values (?)");
-        pstmt2.setBigDecimal(1, new BigDecimal(ToppingPriceTextField.getText()));
-        pstmt2.executeUpdate();
-
-        ResultSet rs = stmt.executeQuery("SELECT MAX(toppingpriceid) ID FROM ToppingPrice");
-        rs.next();
-        int ID1 = rs.getInt("ID");
-
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE Topping SET topping = ?,toppingpriceid = ?, Active = ? WHERE toppingid = " + ID );
-        pstmt.setString(1, ToppingTextField.getText());
-        pstmt.setInt(2, ID1);
-        pstmt.setBoolean(3, IsActiveCheckbox.isSelected());
-        pstmt.executeUpdate();
-
-        view();
+    public void Update(ActionEvent actionEvent) {
     }
 
-    public void Exit(ActionEvent actionEvent) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("mainmenu.fxml"));
-        Scene scene = new Scene(root);
-        Stage stage = (Stage) ButtonExit.getScene().getWindow();
-        stage.setScene(scene);
+    public void Exit(ActionEvent actionEvent) {
     }
 }

@@ -109,18 +109,25 @@ public class SizeController implements Initializable {
 
     public void Update(ActionEvent actionEvent) throws SQLException {
         ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+        Statement stmt = conn.createStatement();
 
-        String ID1 = Tablename.get(0);
-        String ID2 = Tablename.get(2);
+        //sizepriceid
+        String ID = Tablename.get(0);
 
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE Size SET size = ?, Active = ? WHERE sizeid = " + ID1 );
-        pstmt.setString(1, SizeTextfield.getText());
-        pstmt.setBoolean(2, IsActiveCheckbox.isSelected());
-        pstmt.executeUpdate();
-
-        PreparedStatement pstmt2 = conn.prepareStatement("UPDATE Size SET size_price = ? WHERE sizepriceid = " + ID2);
+        PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO SizePrice (size_price) Values (?)");
         pstmt2.setBigDecimal(1, new BigDecimal(SizePriceTextfield.getText()));
+        pstmt2.executeUpdate();
+
+        ResultSet rs = stmt.executeQuery("SELECT MAX(sizepriceid) ID FROM SizePrice");
+        rs.next();
+        int ID1 = rs.getInt("ID");
+
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE Size SET size = ?,sizepriceid = ?, Active = ? WHERE sizeid = " + ID );
+        pstmt.setString(1, SizeTextfield.getText());
+        pstmt.setInt(2, ID1);
+        pstmt.setBoolean(3, IsActiveCheckbox.isSelected());
         pstmt.executeUpdate();
+
         view();
     }
 

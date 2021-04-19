@@ -36,6 +36,7 @@ public class VendorController implements Initializable {
     public ComboBox CityComboBox;
     public ComboBox ZipcodeComboBox;
     public ComboBox StreetComboBox;
+    public Button EquipmentButton;
 
     Connection conn;
     public ObservableList<ObservableList> data;
@@ -177,24 +178,74 @@ public class VendorController implements Initializable {
 
 
     public void Update(ActionEvent actionEvent) throws SQLException {
-       /* ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
 
-        String flavortypeid = Tablename.get(0);
-        String flavorpriceid = Tablename.get(2);
+        //vendorid
+        String id1 = Tablename.get(0);
+        //vendoraddressid
+        String id2 = Tablename.get(5);
 
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE FlavorType SET flavor_type = ?, Active = ? WHERE flavortypeid = " + flavortypeid );
-        pstmt.setString(1, FlavorTypeTextfield.getText());
-        pstmt.setBoolean(2, IsActiveCheckbox.isSelected());
+
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE Vendor SET first_name = ?,last_name = ?,phone = ?,email = ? WHERE vendorid = " + id1 );
+        pstmt.setString(1, FirstNameTextField.getText());
+        pstmt.setString(2, LastNameTextField.getText());
+        pstmt.setString(3, PhoneTextField.getText());
+        pstmt.setString(4, EmailTextField.getText());
         pstmt.executeUpdate();
 
-        PreparedStatement pstmt2 = conn.prepareStatement("UPDATE FlavorType SET flavor_price = ? WHERE flavorpriceid = " + flavorpriceid);
-        pstmt2.setBigDecimal(1, new BigDecimal(PriceTextfield.getText()));
-        pstmt.executeUpdate();
-        view();*/
+        if (!CountryComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt2 = conn.prepareStatement("UPDATE VendorAddress SET countryid = ? WHERE vendoraddressid = " + id2);
+            pstmt2.setInt(1, GetID(CountryComboBox.getValue().toString()));
+            pstmt2.executeUpdate();
+        }
+
+        if (!StateComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt3 = conn.prepareStatement("UPDATE VendorAddress SET stateid = ? WHERE vendoraddressid = " + id2);
+            pstmt3.setInt(1, GetID(StateComboBox.getValue().toString()));
+            pstmt3.executeUpdate();
+        }
+
+        if (!CityComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt4 = conn.prepareStatement("UPDATE VendorAddress SET cityid = ? WHERE vendoraddressid = " + id2);
+            pstmt4.setInt(1, GetID(CityComboBox.getValue().toString()));
+            pstmt4.executeUpdate();
+        }
+
+        if (!ZipcodeComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt5 = conn.prepareStatement("UPDATE VendorAddress SET zipcodeid = ? WHERE vendoraddressid = " + id2);
+            pstmt5.setInt(1, GetID(ZipcodeComboBox.getValue().toString()));
+            pstmt5.executeUpdate();
+        }
+
+        if (!StreetComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt6 = conn.prepareStatement("UPDATE VendorAddress SET streetid = ? WHERE vendoraddressid = " + id2);
+            pstmt6.setInt(1, GetID(StreetComboBox.getValue().toString()));
+            pstmt6.executeUpdate();
+        }
+
+        PreparedStatement pstmt7 = conn.prepareStatement("UPDATE VendorStatus SET vendor_status = ? WHERE vendorid = " + id1);
+        pstmt7.setString(1, IsActiveCheckbox.isSelected() ? "true":"false");
+        pstmt7.executeUpdate();
+
+        view();
     }
 
     public void Exit(ActionEvent actionEvent) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("mainmenu.fxml"));
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) ButtonExit.getScene().getWindow();
+        stage.setScene(scene);
+    }
+
+    public void ManageEquipmentSwitch(ActionEvent actionEvent) throws Exception{
+        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+
+        //vendorid
+        String id1 = Tablename.get(0);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Equipment.fxml"));
+        Parent root = loader.load();
+        EquipmentController eq = loader.getController();
+        eq.Initdata(id1);
         Scene scene = new Scene(root);
         Stage stage = (Stage) ButtonExit.getScene().getWindow();
         stage.setScene(scene);

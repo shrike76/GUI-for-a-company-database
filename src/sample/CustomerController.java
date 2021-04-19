@@ -36,6 +36,7 @@ public class CustomerController implements Initializable {
     public ComboBox StreetComboBox;
 
     final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
+    public Button OrdersButton;
     Connection conn;
     public ObservableList<ObservableList> data;
 
@@ -162,6 +163,7 @@ public class CustomerController implements Initializable {
             ResultSet rs2 = stmt.executeQuery("SELECT MAX(customerid) ID FROM Customer");
             rs2.next();
             int ID2 = rs2.getInt("ID");
+
             PreparedStatement pstmt3 = conn.prepareStatement("INSERT INTO CustomerStatus(customerid, customer_status) Values (?,?)");
             pstmt3.setInt(1, ID2);
             pstmt3.setString(2, IsActiveCheckbox.isSelected() ? "true":"false");
@@ -176,20 +178,56 @@ public class CustomerController implements Initializable {
 
 
     public void Update(ActionEvent actionEvent) throws SQLException {
-        /*ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
 
-        String flavortypeid = Tablename.get(0);
-        String flavorpriceid = Tablename.get(2);
+        //customerid
+        String id1 = Tablename.get(0);
+        //customeraddressid
+        String id2 = Tablename.get(5);
 
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE FlavorType SET flavor_type = ?, Active = ? WHERE flavortypeid = " + flavortypeid );
-        pstmt.setString(1, FlavorTypeTextfield.getText());
-        pstmt.setBoolean(2, IsActiveCheckbox.isSelected());
+
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE Customer SET first_name = ?,last_name = ?,phone = ?,email = ? WHERE customerid = " + id1 );
+        pstmt.setString(1, FirstNameTextField.getText());
+        pstmt.setString(2, LastNameTextField.getText());
+        pstmt.setString(3, PhoneTextField.getText());
+        pstmt.setString(4, EmailTextField.getText());
         pstmt.executeUpdate();
 
-        PreparedStatement pstmt2 = conn.prepareStatement("UPDATE FlavorType SET flavor_price = ? WHERE flavorpriceid = " + flavorpriceid);
-        pstmt2.setBigDecimal(1, new BigDecimal(PriceTextfield.getText()));
-        pstmt.executeUpdate();
-        view();*/
+        if (!CountryComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt2 = conn.prepareStatement("UPDATE CustomerAddress SET countryid = ? WHERE customeraddressid = " + id2);
+            pstmt2.setInt(1, GetID(CountryComboBox.getValue().toString()));
+            pstmt2.executeUpdate();
+        }
+
+        if (!StateComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt3 = conn.prepareStatement("UPDATE CustomerAddress SET stateid = ? WHERE customeraddressid = " + id2);
+            pstmt3.setInt(1, GetID(StateComboBox.getValue().toString()));
+            pstmt3.executeUpdate();
+        }
+
+        if (!CityComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt4 = conn.prepareStatement("UPDATE CustomerAddress SET cityid = ? WHERE customeraddressid = " + id2);
+            pstmt4.setInt(1, GetID(CityComboBox.getValue().toString()));
+            pstmt4.executeUpdate();
+        }
+
+        if (!ZipcodeComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt5 = conn.prepareStatement("UPDATE CustomerAddress SET zipcodeid = ? WHERE customeraddressid = " + id2);
+            pstmt5.setInt(1, GetID(ZipcodeComboBox.getValue().toString()));
+            pstmt5.executeUpdate();
+        }
+
+        if (!StreetComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt6 = conn.prepareStatement("UPDATE CustomerAddress SET streetid = ? WHERE customeraddressid = " + id2);
+            pstmt6.setInt(1, GetID(StreetComboBox.getValue().toString()));
+            pstmt6.executeUpdate();
+        }
+        //fix this
+        PreparedStatement pstmt7 = conn.prepareStatement("UPDATE CustomerStatus SET customer_status = ? WHERE customerid = " + id1);
+        pstmt7.setString(1, IsActiveCheckbox.isSelected() ? "true":"false");
+        pstmt7.executeUpdate();
+
+        view();
     }
 
     public void Exit(ActionEvent actionEvent) throws Exception{
@@ -203,5 +241,19 @@ public class CustomerController implements Initializable {
         String number = Name.substring(Name.lastIndexOf('-')+1);
         int a = Integer.parseInt(number);
         return a;
+    }
+
+    public void ManageOrders(ActionEvent actionEvent) throws Exception{
+        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+
+        //customerid
+        String id1 = Tablename.get(0);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Orders.fxml"));
+        Parent root = loader.load();
+        OrdersController C = loader.getController();
+        C.Initdata(id1);
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) OrdersButton.getScene().getWindow();
+        stage.setScene(scene);
     }
 }

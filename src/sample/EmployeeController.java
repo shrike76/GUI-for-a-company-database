@@ -177,20 +177,56 @@ public class EmployeeController implements Initializable {
 
 
     public void Update(ActionEvent actionEvent) throws SQLException {
-        /*ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
 
-        String flavortypeid = Tablename.get(0);
-        String flavorpriceid = Tablename.get(2);
+        //employeeid
+        String id1 = Tablename.get(0);
+        //employeeid
+        String id2 = Tablename.get(5);
 
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE FlavorType SET flavor_type = ?, Active = ? WHERE flavortypeid = " + flavortypeid );
-        pstmt.setString(1, FlavorTypeTextfield.getText());
-        pstmt.setBoolean(2, IsActiveCheckbox.isSelected());
+
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE Employee SET first_name = ?,last_name = ?,phone = ?,email = ? WHERE employeeid = " + id1 );
+        pstmt.setString(1, FirstNameTextField.getText());
+        pstmt.setString(2, LastNameTextField.getText());
+        pstmt.setString(3, PhoneTextField.getText());
+        pstmt.setString(4, EmailTextField.getText());
         pstmt.executeUpdate();
 
-        PreparedStatement pstmt2 = conn.prepareStatement("UPDATE FlavorType SET flavor_price = ? WHERE flavorpriceid = " + flavorpriceid);
-        pstmt2.setBigDecimal(1, new BigDecimal(PriceTextfield.getText()));
-        pstmt.executeUpdate();
-        view();*/
+        if (!CountryComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt2 = conn.prepareStatement("UPDATE EmployeeAddress SET countryid = ? WHERE employeeaddressid = " + id2);
+            pstmt2.setInt(1, GetID(CountryComboBox.getValue().toString()));
+            pstmt2.executeUpdate();
+        }
+
+        if (!StateComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt3 = conn.prepareStatement("UPDATE EmployeeAddress SET stateid = ? WHERE employeeaddressid = " + id2);
+            pstmt3.setInt(1, GetID(StateComboBox.getValue().toString()));
+            pstmt3.executeUpdate();
+        }
+
+        if (!CityComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt4 = conn.prepareStatement("UPDATE EmployeeAddress SET cityid = ? WHERE employeeaddressid = " + id2);
+            pstmt4.setInt(1, GetID(CityComboBox.getValue().toString()));
+            pstmt4.executeUpdate();
+        }
+
+        if (!ZipcodeComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt5 = conn.prepareStatement("UPDATE EmployeeAddress SET zipcodeid = ? WHERE employeeaddressid = " + id2);
+            pstmt5.setInt(1, GetID(ZipcodeComboBox.getValue().toString()));
+            pstmt5.executeUpdate();
+        }
+
+        if (!StreetComboBox.getSelectionModel().isEmpty()) {
+            PreparedStatement pstmt6 = conn.prepareStatement("UPDATE EmployeeAddress SET streetid = ? WHERE employeeaddressid = " + id2);
+            pstmt6.setInt(1, GetID(StreetComboBox.getValue().toString()));
+            pstmt6.executeUpdate();
+        }
+
+        PreparedStatement pstmt7 = conn.prepareStatement("UPDATE EmployeeStatus SET employee_status = ? WHERE employeeid = " + id1);
+        pstmt7.setString(1, IsActiveCheckbox.isSelected() ? "true":"false");
+        pstmt7.executeUpdate();
+
+        view();
     }
 
     public void Exit(ActionEvent actionEvent) throws Exception{

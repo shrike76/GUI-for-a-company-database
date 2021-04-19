@@ -90,7 +90,6 @@ public class FlavortypeController implements Initializable {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
             PreparedStatement pstmt = conn.prepareStatement("INSERT INTO FlavorPrice (flavor_price) Values (?)");
-
             pstmt.setBigDecimal(1, new BigDecimal(PriceTextfield.getText()));
             pstmt.executeUpdate();
 
@@ -113,18 +112,25 @@ public class FlavortypeController implements Initializable {
 
     public void Update(ActionEvent actionEvent) throws SQLException {
         ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+        Statement stmt = conn.createStatement();
 
-        String flavortypeid = Tablename.get(0);
-        String flavorpriceid = Tablename.get(2);
+        //flavorpriceid
+        String ID = Tablename.get(0);
 
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE FlavorType SET flavor_type = ?, Active = ? WHERE flavortypeid = " + flavortypeid );
-        pstmt.setString(1, FlavorTypeTextfield.getText());
-        pstmt.setBoolean(2, IsActiveCheckbox.isSelected());
-        pstmt.executeUpdate();
-
-        PreparedStatement pstmt2 = conn.prepareStatement("UPDATE FlavorType SET flavor_price = ? WHERE flavorpriceid = " + flavorpriceid);
+        PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO FlavorPrice (flavor_price) Values (?)");
         pstmt2.setBigDecimal(1, new BigDecimal(PriceTextfield.getText()));
+        pstmt2.executeUpdate();
+
+        ResultSet rs = stmt.executeQuery("SELECT MAX(flavorpriceid) ID FROM FlavorPrice");
+        rs.next();
+        int ID1 = rs.getInt("ID");
+
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE FlavorType SET flavor_type = ?,flavorpriceid = ?, Active = ? WHERE flavortypeid = " + ID );
+        pstmt.setString(1, FlavorTypeTextfield.getText());
+        pstmt.setInt(2, ID1);
+        pstmt.setBoolean(3, IsActiveCheckbox.isSelected());
         pstmt.executeUpdate();
+
         view();
     }
 
