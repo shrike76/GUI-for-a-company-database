@@ -110,7 +110,7 @@ public class EquipmentConditionController implements Initializable {
     }
 
     public void Exit(ActionEvent actionEvent) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("Equipment.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("mainmenu.fxml"));
         Scene scene = new Scene(root);
         Stage stage = (Stage) ButtonExit.getScene().getWindow();
         stage.setScene(scene);

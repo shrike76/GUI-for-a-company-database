@@ -37,7 +37,7 @@ public class MainmenuController implements Initializable {
             Statement stmt = conn.createStatement();
             System.out.println("CONNECTED");
             ResultSet rs;
-            rs = stmt.executeQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME NOT LIKE '%Status%' AND TABLE_CATALOG='IceCreamDB'");
+            rs = stmt.executeQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME NOT LIKE '%Status%' AND Table_NAME NOT IN ('Admin', 'AdminLogin', 'EmployeeLogin', 'EmployeeCertificate',  'CustomerAddress', 'EmployeeAddress', 'VendorAddress', 'SizePrice', 'FlavorPrice', 'ToppingPrice', 'IceCream', 'Premium', 'Bill', 'Reservation', 'Equipment', 'Orders') AND TABLE_CATALOG='IceCreamDB' ORDER BY TABLE_NAME");
             while (rs.next()) {
                 items.add(rs.getString(1));
 

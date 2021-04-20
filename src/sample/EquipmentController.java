@@ -37,7 +37,6 @@ public class EquipmentController implements Initializable {
         try {
             conn = DriverManager.getConnection(AWS);
             System.out.println("CONNECTED");
-            view();
             Statement stmt = conn.createStatement();
 
             ResultSet rs = stmt.executeQuery("SELECT * FROM EquipmentCondition");
@@ -105,12 +104,13 @@ public class EquipmentController implements Initializable {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
 
-            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO Equipment (vendorid, equipmentconditionid, equipment_type, equipment_name, equipment_price) Values (?,?,?,?,?)");
+            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO Equipment (vendorid, equipmentconditionid, equipment_type, equipment_name, equipment_price, Active) Values (?,?,?,?,?,?)");
             pstmt2.setInt(1, Integer.parseInt(_vendorid));
             pstmt2.setInt(2, GetID(EquipmentConditionComboBox.getValue().toString()));
             pstmt2.setString(3, EquipmentTypeTextField.getText());
             pstmt2.setString(4, EquipmentNameTextField.getText());
             pstmt2.setBigDecimal(5, new BigDecimal(EquipmentPriceTextField.getText()));
+            pstmt2.setString(6, IsActiveCheckbox.isSelected() ? "true":"false");
             pstmt2.executeUpdate();
 
             view();
@@ -128,11 +128,12 @@ public class EquipmentController implements Initializable {
         //adminid
         String ID = Tablename.get(0);
 
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE Equipment SET equipment_type = ?,equipment_name = ?, equipment_price = ?, equipmentconditionid = ? WHERE equipmentid = " + ID );
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE Equipment SET equipment_type = ?,equipment_name = ?, equipment_price = ?, equipmentconditionid = ?, Active = ? WHERE equipmentid = " + ID );
         pstmt.setString(1, EquipmentTypeTextField.getText());
         pstmt.setString(2, EquipmentNameTextField.getText());
         pstmt.setBigDecimal(3, new BigDecimal(EquipmentPriceTextField.getText()));
         pstmt.setInt(4, GetID(EquipmentConditionComboBox.getValue().toString()));
+        pstmt.setString(5, IsActiveCheckbox.isSelected() ? "true":"false");
         pstmt.executeUpdate();
 
         view();
@@ -146,13 +147,6 @@ public class EquipmentController implements Initializable {
     
     public void Exit(ActionEvent actionEvent) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("Vendor.fxml"));
-        Scene scene = new Scene(root);
-        Stage stage = (Stage) ButtonExit.getScene().getWindow();
-        stage.setScene(scene);
-    }
-
-    public void EquipmentCondition(ActionEvent actionEvent) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("EquipmentCondition.fxml"));
         Scene scene = new Scene(root);
         Stage stage = (Stage) ButtonExit.getScene().getWindow();
         stage.setScene(scene);

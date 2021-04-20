@@ -22,5 +22,4 @@
     <CheckBox fx:id="IsActiveCheckbox" layoutX="722.0" layoutY="345.0" mnemonicParsing="false" selected="true" text="Is Active" />
    <ComboBox fx:id="EquipmentConditionComboBox" layoutX="687.0" layoutY="147.0" prefHeight="25.0" prefWidth="100.0" />
    <Label layoutX="538.0" layoutY="151.0" text="Equipment Condition" />
-   <Button fx:id="EquipmentConditionButton" layoutX="538.0" layoutY="341.0" mnemonicParsing="false" onAction="#EquipmentCondition" text="Equipment Condition" />
 </AnchorPane>

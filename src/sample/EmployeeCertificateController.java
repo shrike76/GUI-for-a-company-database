@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -17,11 +18,12 @@ import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
-public class EmployeeCertificate {
+public class EmployeeCertificateController implements Initializable {
     public TableView tv1;
     public TextField EmployeeCertificateTextField;
     public CheckBox IsActiveCheckbox;
     public Button ButtonExit;
+    private String _employeeid;
 
     Connection conn;
     final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
@@ -31,7 +33,6 @@ public class EmployeeCertificate {
         try {
             conn = DriverManager.getConnection(AWS);
             System.out.println("CONNECTED");
-            view();
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
@@ -42,8 +43,8 @@ public class EmployeeCertificate {
         try {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT FT.flavortypeid, FT.flavor_type, FT.flavorpriceid, FP.flavor_price, FT.Active FROM FlavorType FT LEFT JOIN FlavorPrice FP\n" +
-                    "ON FT.flavorpriceid = FP.flavorpriceid");
+            ResultSet rs = stmt.executeQuery("SELECT EC.employeecertificateid, EC.employeeid, E.first_name, E.last_name, EC.employee_certificate, EC.Active FROM EmployeeCertificate EC LEFT JOIN Employee E ON EC.employeeid = E.employeeid\n" +
+                    "WHERE EC.employeeid = " + _employeeid);
             if (tv1.getItems().isEmpty()) {
                 for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
                     //We are using non property style for making dynamic table. Borrowed from a CIS 3368 assignment by Colton Weber (the guy writing this code) https://github.com/shrike76/Student-Database-using-Java-MySQL-and-AWS
@@ -82,59 +83,52 @@ public class EmployeeCertificate {
     }
 
     public void Add() {
-       /* try {
+        try {
             data = FXCollections.observableArrayList();
-            Statement stmt = conn.createStatement();
-            PreparedStatement pstmt = conn.prepareStatement("INSERT INTO FlavorPrice (flavor_price) Values (?)");
-            pstmt.setBigDecimal(1, new BigDecimal(PriceTextfield.getText()));
-            pstmt.executeUpdate();
 
-            ResultSet rs = stmt.executeQuery("SELECT MAX(flavorpriceid) ID FROM FlavorPrice");
-            rs.next();
-            int ID = rs.getInt("ID");
-
-            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO FlavorType (flavorpriceid, flavor_type, Active) Values (?, ?, ?)");
-            pstmt2.setInt(1, ID);
+            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO EmployeeCertificate (employeeid, employee_certificate, Active) Values (?,?,?)");
+            pstmt2.setInt(1, Integer.parseInt(_employeeid));
             pstmt2.setString(2, EmployeeCertificateTextField.getText());
-            pstmt2.setBoolean(3, IsActiveCheckbox.isSelected());
+            pstmt2.setString(3, IsActiveCheckbox.isSelected() ? "true":"false");
             pstmt2.executeUpdate();
+
             view();
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Error on Building Data");
-        }*/
+        }
     }
 
 
     public void Update(ActionEvent actionEvent) throws SQLException {
-       /* ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
-        Statement stmt = conn.createStatement();
+        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
 
-        //flavorpriceid
+        //employeeceritificateid
         String ID = Tablename.get(0);
 
-        PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO FlavorPrice (flavor_price) Values (?)");
-        pstmt2.setBigDecimal(1, new BigDecimal(PriceTextfield.getText()));
-        pstmt2.executeUpdate();
-
-        ResultSet rs = stmt.executeQuery("SELECT MAX(flavorpriceid) ID FROM FlavorPrice");
-        rs.next();
-        int ID1 = rs.getInt("ID");
-
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE FlavorType SET flavor_type = ?,flavorpriceid = ?, Active = ? WHERE flavortypeid = " + ID );
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE EmployeeCertificate SET employee_certificate = ?, Active = ? WHERE employeecertificateid = " + ID );
         pstmt.setString(1, EmployeeCertificateTextField.getText());
-        pstmt.setInt(2, ID1);
-        pstmt.setBoolean(3, IsActiveCheckbox.isSelected());
-        pstmt.executeUpdate();*/
+        pstmt.setString(2, IsActiveCheckbox.isSelected() ? "true":"false");
+        pstmt.executeUpdate();
 
         view();
     }
 
     public void Exit(ActionEvent actionEvent) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("mainmenu.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("Employee.fxml"));
         Scene scene = new Scene(root);
         Stage stage = (Stage) ButtonExit.getScene().getWindow();
         stage.setScene(scene);
     }
 
+    public void Initdata(String employeeid){
+        _employeeid = employeeid;
+        view();
+    }
+
+    private int GetID(String Name){
+        String number = Name.substring(Name.lastIndexOf('-')+1);
+        int a = Integer.parseInt(number);
+        return a;
+    }
 }

@@ -281,24 +281,10 @@ public class EmployeeController implements Initializable {
         String id1 = Tablename.get(0);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("EmployeeCertificate.fxml"));
         Parent root = loader.load();
-        AdminController C = loader.getController();
+        EmployeeCertificateController C = loader.getController();
         C.Initdata(id1);
         Scene scene = new Scene(root);
         Stage stage = (Stage) CertificateButton.getScene().getWindow();
         stage.setScene(scene);
     }
-    public void EmployeeLogin(ActionEvent actionEvent) throws Exception{
-        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
-
-        //customerid
-        String id1 = Tablename.get(0);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("EmployeeLogin.fxml"));
-        Parent root = loader.load();
-        AdminController C = loader.getController();
-        C.Initdata(id1);
-        Scene scene = new Scene(root);
-        Stage stage = (Stage) EmployeeLoginButton.getScene().getWindow();
-        stage.setScene(scene);
-    }
-
 }

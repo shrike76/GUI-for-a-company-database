@@ -34,9 +34,11 @@ public class CustomerController implements Initializable {
     public ComboBox CityComboBox;
     public ComboBox ZipcodeComboBox;
     public ComboBox StreetComboBox;
+    public Button OrdersButton;
+    public CheckBox PremiumCheckbox;
+    public CheckBox ReservationCheckbox;
 
     final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
-    public Button OrdersButton;
     Connection conn;
     public ObservableList<ObservableList> data;
 
@@ -84,7 +86,7 @@ public class CustomerController implements Initializable {
         try {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT CU.customerid,CU.first_name,CU.last_name,CU.phone,CU.email,CU.customeraddressid,CO.countryid,CO.country_name,S.stateid,S.state_name,C.cityid,C.city_name,Z.zipcodeid,Z.zipcode_number,SL.streetid,SL.street_name, CS.customer_status Active\n" +
+            ResultSet rs = stmt.executeQuery("SELECT CU.customerid,CU.first_name,CU.last_name,CU.phone,CU.email,CU.customeraddressid,CO.countryid,CO.country_name,S.stateid,S.state_name,C.cityid,C.city_name,Z.zipcodeid,Z.zipcode_number,SL.streetid,SL.street_name, CS.customer_status, P.premiumid, PS.premium_status, R.reservation_date, R.reservationid, RS.reservation_status\n" +
                     "FROM Customer CU LEFT JOIN CustomerAddress CA\n" +
                     "ON CU.customeraddressid = CA.customeraddressid\n" +
                     "    LEFT JOIN CountryList CO ON CA.countryid = CO.countryid\n" +
@@ -92,7 +94,11 @@ public class CustomerController implements Initializable {
                     "    LEFT JOIN CityList C ON CA.cityid = C.cityid\n" +
                     "    LEFT JOIN ZipcodeList Z ON CA.zipcodeid = Z.zipcodeid\n" +
                     "    LEFT JOIN StreetList SL ON CA.streetid = SL.streetid\n" +
-                    "    LEFT JOIN CustomerStatus CS ON CU.customerid = CS.customerid");
+                    "    LEFT JOIN CustomerStatus CS ON CU.customerid = CS.customerid\n" +
+                    "    LEFT JOIN Premium P ON CU.customerid = P.customerid\n" +
+                    "    LEFT JOIN PremiumStatus PS ON P.premiumstatusid = PS.premiumstatusid\n" +
+                    "    LEFT JOIN Reservation R ON R.customerid = CU.customerid\n" +
+                    "    LEFT JOIN ReservationStatus RS ON R.Reservationstatusid = RS.reservationstatusid");
             if (tv1.getItems().isEmpty()) {
                 for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
                     //We are using non property style for making dynamic table. Borrowed from a CIS 3368 assignment by Colton Weber (the guy writing this code) https://github.com/shrike76/Student-Database-using-Java-MySQL-and-AWS
@@ -169,6 +175,17 @@ public class CustomerController implements Initializable {
             pstmt3.setString(2, IsActiveCheckbox.isSelected() ? "true":"false");
             pstmt3.executeUpdate();
 
+            PreparedStatement pstmt4 = conn.prepareStatement("INSERT INTO Premium(premiumstatusid, customerid) Values (?,?)");
+            pstmt4.setInt(1, PremiumCheckbox.isSelected() ? 1:2);
+            pstmt4.setInt(2, ID2);
+            pstmt4.executeUpdate();
+
+            PreparedStatement pstmt5 = conn.prepareStatement("INSERT INTO Reservation(reservationstatusid, customerid, reservation_date) Values (?,?,?)");
+            pstmt5.setInt(1, PremiumCheckbox.isSelected() ? 1:5);
+            pstmt5.setInt(2, ID2);
+            pstmt5.setDate(3, java.sql.Date.valueOf(java.time.LocalDate.now()));
+            pstmt5.executeUpdate();
+
             view();
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,6 +201,11 @@ public class CustomerController implements Initializable {
         String id1 = Tablename.get(0);
         //customeraddressid
         String id2 = Tablename.get(5);
+        //premiumid
+        String id3 = Tablename.get(17);
+        //reservationid
+        String id4 = Tablename.get(20);
+
 
 
         PreparedStatement pstmt = conn.prepareStatement("UPDATE Customer SET first_name = ?,last_name = ?,phone = ?,email = ? WHERE customerid = " + id1 );
@@ -226,6 +248,17 @@ public class CustomerController implements Initializable {
         PreparedStatement pstmt7 = conn.prepareStatement("UPDATE CustomerStatus SET customer_status = ? WHERE customerid = " + id1);
         pstmt7.setString(1, IsActiveCheckbox.isSelected() ? "true":"false");
         pstmt7.executeUpdate();
+
+        PreparedStatement pstmt8 = conn.prepareStatement("UPDATE Premium SET premiumstatusid = ? WHERE premiumid = " + id3);
+        pstmt8.setInt(1, PremiumCheckbox.isSelected() ? 1:2);
+        pstmt8.executeUpdate();
+
+        PreparedStatement pstmt9 = conn.prepareStatement("UPDATE Reservation SET reservationstatusid = ?, reservation_date = ? WHERE reservationid = " + id4);
+        pstmt9.setInt(1, PremiumCheckbox.isSelected() ? 1:5);
+        pstmt9.setDate(2, java.sql.Date.valueOf(java.time.LocalDate.now()));
+        pstmt9.executeUpdate();
+
+
 
         view();
     }
