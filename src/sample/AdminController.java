@@ -1,5 +1,6 @@
 package sample;
 
+import com.sun.scenario.effect.impl.sw.java.JSWBlend_MULTIPLYPeer;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,17 +19,17 @@ import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
-public class EquipmentController implements Initializable {
+public class AdminController implements Initializable {
     public TableView tv1;
     public Button ButtonExit;
-    public TextField EquipmentTypeTextField;
-    public TextField EquipmentNameTextField;
+    public TextField FirstNameTextField;
+    public TextField LastNameTextField;
     public CheckBox IsActiveCheckbox;
-    public TextField EquipmentPriceTextField;
-    public ComboBox EquipmentConditionComboBox;
-    public Button EquipmentConditionButton;
+    public TextField UserNameTextField;
+    public TextField PasswordTextField;
+    public ComboBox AdminStatusComboBox;
 
-    private String _vendorid;
+    private String _employeeid;
     final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
     Connection conn;
     public ObservableList<ObservableList> data;
@@ -37,21 +38,22 @@ public class EquipmentController implements Initializable {
         try {
             conn = DriverManager.getConnection(AWS);
             System.out.println("CONNECTED");
-            view();
+
             Statement stmt = conn.createStatement();
 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM EquipmentCondition");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM AdminStatus");
             while (rs.next()) {
-                EquipmentConditionComboBox.getItems().addAll(rs.getString("equipment_condition") +"-"+ rs.getString("equipmentconditionid"));
+               AdminStatusComboBox.getItems().addAll(rs.getString("admin_status") +"-"+ rs.getString("adminstatusid"));
             }
+
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
 
     }
 
-    public void Initdata(String vendorid){
-        _vendorid = vendorid;
+    public void Initdata(String employeeid){
+        _employeeid = employeeid;
         view();
     }
 
@@ -59,10 +61,12 @@ public class EquipmentController implements Initializable {
         try {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT E.equipmentid, E.vendorid, E.equipment_type, E.equipment_name, E.equipment_price, EC.equipment_condition, E.Active FROM Equipment E LEFT JOIN EquipmentCondition EC\n" +
-                    "ON E.equipmentconditionid = EC.equipmentconditionid\n" +
-                    "WHERE E.vendorid = " + _vendorid);
-            System.out.println(_vendorid);
+            ResultSet rs = stmt.executeQuery("SELECT A.adminid, A.first_name, A.last_name, AL.username, AL.password, AST.admin_status FROM Admin A LEFT JOIN AdminLogin AL\n" +
+                    "ON A.adminid = AL.adminid\n" +
+                    "LEFT JOIN AdminStatus AST\n" +
+                    "ON AST.adminstatusid = A.adminstatusid\n" +
+                    "WHERE A.employeeid = " + _employeeid);
+            //System.out.println(_employeeid);
             if (tv1.getItems().isEmpty()) {
                 for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
                     //We are using non property style for making dynamic table. Borrowed from a CIS 3368 assignment by Colton Weber (the guy writing this code) https://github.com/shrike76/Student-Database-using-Java-MySQL-and-AWS
@@ -105,13 +109,22 @@ public class EquipmentController implements Initializable {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
 
-            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO Equipment (vendorid, equipmentconditionid, equipment_type, equipment_name, equipment_price) Values (?,?,?,?,?)");
-            pstmt2.setInt(1, Integer.parseInt(_vendorid));
-            pstmt2.setInt(2, GetID(EquipmentConditionComboBox.getValue().toString()));
-            pstmt2.setString(3, EquipmentTypeTextField.getText());
-            pstmt2.setString(4, EquipmentNameTextField.getText());
-            pstmt2.setBigDecimal(5, new BigDecimal(EquipmentPriceTextField.getText()));
+            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO Admin (employeeid, first_name, last_name, adminstatusid) Values (?,?,?,?)");
+            pstmt2.setInt(1, Integer.parseInt(_employeeid));
+            pstmt2.setString(2, FirstNameTextField.getText());
+            pstmt2.setString(3, LastNameTextField.getText());
+            pstmt2.setInt(4, GetID(AdminStatusComboBox.getValue().toString()));
             pstmt2.executeUpdate();
+
+            ResultSet rs = stmt.executeQuery("SELECT MAX(adminid) ID FROM Admin");
+            rs.next();
+            int ID = rs.getInt("ID");
+
+            PreparedStatement pstmt = conn.prepareStatement("INSERT INTO AdminLogin (adminid, username, password) Values (?,?,?)");
+            pstmt.setInt(1, ID);
+            pstmt.setString(2, UserNameTextField.getText());
+            pstmt.setString(3, PasswordTextField.getText());
+            pstmt.executeUpdate();
 
             view();
         } catch (SQLException e) {
@@ -128,33 +141,31 @@ public class EquipmentController implements Initializable {
         //adminid
         String ID = Tablename.get(0);
 
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE Equipment SET equipment_type = ?,equipment_name = ?, equipment_price = ?, equipmentconditionid = ? WHERE equipmentid = " + ID );
-        pstmt.setString(1, EquipmentTypeTextField.getText());
-        pstmt.setString(2, EquipmentNameTextField.getText());
-        pstmt.setBigDecimal(3, new BigDecimal(EquipmentPriceTextField.getText()));
-        pstmt.setInt(4, GetID(EquipmentConditionComboBox.getValue().toString()));
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE Admin SET first_name = ?,last_name = ?, adminstatusid = ? WHERE adminid = " + ID );
+        pstmt.setString(1, FirstNameTextField.getText());
+        pstmt.setString(2, LastNameTextField.getText());
+        pstmt.setInt(3, GetID(AdminStatusComboBox.getValue().toString()));
         pstmt.executeUpdate();
 
+        PreparedStatement pstmt2 = conn.prepareStatement("UPDATE AdminLogin SET username = ?,password = ? WHERE adminid = " + ID );
+        pstmt2.setString(1, UserNameTextField.getText());
+        pstmt2.setString(2, PasswordTextField.getText());
+        pstmt2.executeUpdate();
         view();
     }
-    
+
+    public void Exit(ActionEvent actionEvent) throws Exception{
+        Parent root = FXMLLoader.load(getClass().getResource("Employee.fxml"));
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) ButtonExit.getScene().getWindow();
+        stage.setScene(scene);
+    }
+
     private int GetID(String Name){
         String number = Name.substring(Name.lastIndexOf('-')+1);
         int a = Integer.parseInt(number);
         return a;
     }
-    
-    public void Exit(ActionEvent actionEvent) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("Vendor.fxml"));
-        Scene scene = new Scene(root);
-        Stage stage = (Stage) ButtonExit.getScene().getWindow();
-        stage.setScene(scene);
-    }
 
-    public void EquipmentCondition(ActionEvent actionEvent) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("EquipmentCondition.fxml"));
-        Scene scene = new Scene(root);
-        Stage stage = (Stage) ButtonExit.getScene().getWindow();
-        stage.setScene(scene);
-    }
+
 }

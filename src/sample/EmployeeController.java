@@ -37,6 +37,11 @@ public class EmployeeController implements Initializable {
     public ComboBox StreetComboBox;
 
     final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
+    public Button AdminLoginButton;
+    public Button CertificateButton;
+    public Button EmployeeLoginButton;
+    public TextField UsernameTextField;
+    public TextField PasswordTextField;
     Connection conn;
     public ObservableList<ObservableList> data;
 
@@ -84,7 +89,7 @@ public class EmployeeController implements Initializable {
         try {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT E.employeeid,E.first_name,E.last_name,E.phone,E.email,E.employeeaddressid,CO.countryid,CO.country_name,S.stateid,S.state_name,C.cityid,C.city_name,Z.zipcodeid,Z.zipcode_number,SL.streetid,SL.street_name, ES.employee_status Active\n" +
+            ResultSet rs = stmt.executeQuery("SELECT E.employeeid,E.first_name,E.last_name,E.phone,E.email,E.employeeaddressid,CO.countryid,CO.country_name,S.stateid,S.state_name,C.cityid,C.city_name,Z.zipcodeid,Z.zipcode_number,SL.streetid,SL.street_name, ES.employee_status, EL.username, EL.password\n" +
                     "FROM Employee E LEFT JOIN EmployeeAddress EA\n" +
                     "ON E.Employeeaddressid = EA.employeeaddressid\n" +
                     "    LEFT JOIN CountryList CO ON EA.countryid = CO.countryid\n" +
@@ -92,7 +97,8 @@ public class EmployeeController implements Initializable {
                     "    LEFT JOIN CityList C ON EA.cityid = C.cityid\n" +
                     "    LEFT JOIN ZipcodeList Z ON EA.zipcodeid = Z.zipcodeid\n" +
                     "    LEFT JOIN StreetList SL ON EA.streetid = SL.streetid\n" +
-                    "    LEFT JOIN EmployeeStatus ES ON E.employeeid = ES.employeeid");
+                    "    LEFT JOIN EmployeeStatus ES ON E.employeeid = ES.employeeid\n" +
+                    "    LEFT JOIN EmployeeLogin EL ON E.employeeid = EL.employeeid");
             if (tv1.getItems().isEmpty()) {
                 for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
                     //We are using non property style for making dynamic table. Borrowed from a CIS 3368 assignment by Colton Weber (the guy writing this code) https://github.com/shrike76/Student-Database-using-Java-MySQL-and-AWS
@@ -163,10 +169,17 @@ public class EmployeeController implements Initializable {
             ResultSet rs2 = stmt.executeQuery("SELECT MAX(employeeid) ID FROM Employee");
             rs2.next();
             int ID2 = rs2.getInt("ID");
+
             PreparedStatement pstmt3 = conn.prepareStatement("INSERT INTO EmployeeStatus(employeeid, employee_status) Values (?,?)");
             pstmt3.setInt(1, ID2);
             pstmt3.setString(2, IsActiveCheckbox.isSelected() ? "true":"false");
             pstmt3.executeUpdate();
+
+            PreparedStatement pstmt4 = conn.prepareStatement("INSERT INTO EmployeeLogin(employeeid, username, password) Values (?,?,?)");
+            pstmt4.setInt(1, ID2);
+            pstmt4.setString(2, UsernameTextField.getText());
+            pstmt4.setString(3, PasswordTextField.getText());
+            pstmt4.executeUpdate();
 
             view();
         } catch (Exception e) {
@@ -226,6 +239,11 @@ public class EmployeeController implements Initializable {
         pstmt7.setString(1, IsActiveCheckbox.isSelected() ? "true":"false");
         pstmt7.executeUpdate();
 
+        PreparedStatement pstmt8 = conn.prepareStatement("UPDATE EmployeeLogin SET username = ?, password = ? WHERE employeeid = " + id1 );
+        pstmt8.setString(1, UsernameTextField.getText());
+        pstmt8.setString(2, PasswordTextField.getText());
+        pstmt8.executeUpdate();
+
         view();
     }
 
@@ -240,6 +258,47 @@ public class EmployeeController implements Initializable {
         String number = Name.substring(Name.lastIndexOf('-')+1);
         int a = Integer.parseInt(number);
         return a;
+    }
+
+    public void Admin(ActionEvent actionEvent) throws Exception{
+        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+
+        //employeeid
+        String id1 = Tablename.get(0);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Admin.fxml"));
+        Parent root = loader.load();
+        AdminController C = loader.getController();
+        C.Initdata(id1);
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) AdminLoginButton.getScene().getWindow();
+        stage.setScene(scene);
+    }
+
+    public void EmployeeCertificate(ActionEvent actionEvent) throws Exception{
+        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+
+        //employeeid
+        String id1 = Tablename.get(0);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("EmployeeCertificate.fxml"));
+        Parent root = loader.load();
+        AdminController C = loader.getController();
+        C.Initdata(id1);
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) CertificateButton.getScene().getWindow();
+        stage.setScene(scene);
+    }
+    public void EmployeeLogin(ActionEvent actionEvent) throws Exception{
+        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+
+        //customerid
+        String id1 = Tablename.get(0);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("EmployeeLogin.fxml"));
+        Parent root = loader.load();
+        AdminController C = loader.getController();
+        C.Initdata(id1);
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) EmployeeLoginButton.getScene().getWindow();
+        stage.setScene(scene);
     }
 
 }

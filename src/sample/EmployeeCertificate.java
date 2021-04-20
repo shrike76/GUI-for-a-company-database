@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -18,19 +17,14 @@ import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
-public class EquipmentController implements Initializable {
+public class EmployeeCertificate {
     public TableView tv1;
-    public Button ButtonExit;
-    public TextField EquipmentTypeTextField;
-    public TextField EquipmentNameTextField;
+    public TextField EmployeeCertificateTextField;
     public CheckBox IsActiveCheckbox;
-    public TextField EquipmentPriceTextField;
-    public ComboBox EquipmentConditionComboBox;
-    public Button EquipmentConditionButton;
+    public Button ButtonExit;
 
-    private String _vendorid;
-    final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
     Connection conn;
+    final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
     public ObservableList<ObservableList> data;
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -38,31 +32,18 @@ public class EquipmentController implements Initializable {
             conn = DriverManager.getConnection(AWS);
             System.out.println("CONNECTED");
             view();
-            Statement stmt = conn.createStatement();
-
-            ResultSet rs = stmt.executeQuery("SELECT * FROM EquipmentCondition");
-            while (rs.next()) {
-                EquipmentConditionComboBox.getItems().addAll(rs.getString("equipment_condition") +"-"+ rs.getString("equipmentconditionid"));
-            }
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
-
     }
 
-    public void Initdata(String vendorid){
-        _vendorid = vendorid;
-        view();
-    }
-
+    //code to view table into a listview. can be replicated everywhere.
     public void view() {
         try {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT E.equipmentid, E.vendorid, E.equipment_type, E.equipment_name, E.equipment_price, EC.equipment_condition, E.Active FROM Equipment E LEFT JOIN EquipmentCondition EC\n" +
-                    "ON E.equipmentconditionid = EC.equipmentconditionid\n" +
-                    "WHERE E.vendorid = " + _vendorid);
-            System.out.println(_vendorid);
+            ResultSet rs = stmt.executeQuery("SELECT FT.flavortypeid, FT.flavor_type, FT.flavorpriceid, FP.flavor_price, FT.Active FROM FlavorType FT LEFT JOIN FlavorPrice FP\n" +
+                    "ON FT.flavorpriceid = FP.flavorpriceid");
             if (tv1.getItems().isEmpty()) {
                 for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
                     //We are using non property style for making dynamic table. Borrowed from a CIS 3368 assignment by Colton Weber (the guy writing this code) https://github.com/shrike76/Student-Database-using-Java-MySQL-and-AWS
@@ -74,7 +55,7 @@ public class EquipmentController implements Initializable {
                         }
                     });
                     tv1.getColumns().addAll(col);
-                    //System.out.println("Column [" + i + "] ");
+                    System.out.println("Column [" + i + "] ");
                 }
             }
 
@@ -89,7 +70,7 @@ public class EquipmentController implements Initializable {
                     }
                     row.add(value);
                 }
-                //System.out.println("Row [1] added " + row);
+                System.out.println("Row [1] added " + row);
                 data.add(row);
 
             }
@@ -101,60 +82,59 @@ public class EquipmentController implements Initializable {
     }
 
     public void Add() {
-        try {
+       /* try {
             data = FXCollections.observableArrayList();
             Statement stmt = conn.createStatement();
+            PreparedStatement pstmt = conn.prepareStatement("INSERT INTO FlavorPrice (flavor_price) Values (?)");
+            pstmt.setBigDecimal(1, new BigDecimal(PriceTextfield.getText()));
+            pstmt.executeUpdate();
 
-            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO Equipment (vendorid, equipmentconditionid, equipment_type, equipment_name, equipment_price) Values (?,?,?,?,?)");
-            pstmt2.setInt(1, Integer.parseInt(_vendorid));
-            pstmt2.setInt(2, GetID(EquipmentConditionComboBox.getValue().toString()));
-            pstmt2.setString(3, EquipmentTypeTextField.getText());
-            pstmt2.setString(4, EquipmentNameTextField.getText());
-            pstmt2.setBigDecimal(5, new BigDecimal(EquipmentPriceTextField.getText()));
+            ResultSet rs = stmt.executeQuery("SELECT MAX(flavorpriceid) ID FROM FlavorPrice");
+            rs.next();
+            int ID = rs.getInt("ID");
+
+            PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO FlavorType (flavorpriceid, flavor_type, Active) Values (?, ?, ?)");
+            pstmt2.setInt(1, ID);
+            pstmt2.setString(2, EmployeeCertificateTextField.getText());
+            pstmt2.setBoolean(3, IsActiveCheckbox.isSelected());
             pstmt2.executeUpdate();
-
             view();
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Error on Building Data");
-        }
+        }*/
     }
 
 
     public void Update(ActionEvent actionEvent) throws SQLException {
-        ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
+       /* ObservableList<String> Tablename = (ObservableList<String>) tv1.getSelectionModel().getSelectedItem();
         Statement stmt = conn.createStatement();
 
-        //adminid
+        //flavorpriceid
         String ID = Tablename.get(0);
 
-        PreparedStatement pstmt = conn.prepareStatement("UPDATE Equipment SET equipment_type = ?,equipment_name = ?, equipment_price = ?, equipmentconditionid = ? WHERE equipmentid = " + ID );
-        pstmt.setString(1, EquipmentTypeTextField.getText());
-        pstmt.setString(2, EquipmentNameTextField.getText());
-        pstmt.setBigDecimal(3, new BigDecimal(EquipmentPriceTextField.getText()));
-        pstmt.setInt(4, GetID(EquipmentConditionComboBox.getValue().toString()));
-        pstmt.executeUpdate();
+        PreparedStatement pstmt2 = conn.prepareStatement("INSERT INTO FlavorPrice (flavor_price) Values (?)");
+        pstmt2.setBigDecimal(1, new BigDecimal(PriceTextfield.getText()));
+        pstmt2.executeUpdate();
+
+        ResultSet rs = stmt.executeQuery("SELECT MAX(flavorpriceid) ID FROM FlavorPrice");
+        rs.next();
+        int ID1 = rs.getInt("ID");
+
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE FlavorType SET flavor_type = ?,flavorpriceid = ?, Active = ? WHERE flavortypeid = " + ID );
+        pstmt.setString(1, EmployeeCertificateTextField.getText());
+        pstmt.setInt(2, ID1);
+        pstmt.setBoolean(3, IsActiveCheckbox.isSelected());
+        pstmt.executeUpdate();*/
 
         view();
     }
-    
-    private int GetID(String Name){
-        String number = Name.substring(Name.lastIndexOf('-')+1);
-        int a = Integer.parseInt(number);
-        return a;
-    }
-    
+
     public void Exit(ActionEvent actionEvent) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("Vendor.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("mainmenu.fxml"));
         Scene scene = new Scene(root);
         Stage stage = (Stage) ButtonExit.getScene().getWindow();
         stage.setScene(scene);
     }
 
-    public void EquipmentCondition(ActionEvent actionEvent) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("EquipmentCondition.fxml"));
-        Scene scene = new Scene(root);
-        Stage stage = (Stage) ButtonExit.getScene().getWindow();
-        stage.setScene(scene);
-    }
 }

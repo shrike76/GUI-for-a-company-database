@@ -28,6 +28,8 @@ public class OrdersController implements Initializable {
     public ComboBox ToppingComboBox;
     public ComboBox OrderStatusComboBox;
     public ComboBox BillStatusComboBox;
+    public Button OrderStatusButton;
+    public Button BillStatusButton;
 
     private String _customerid;
     final String AWS = "jdbc:sqlserver://CoT-CIS3365-18:1433;databaseName=IceCreamDB;user=IceCream;password=Vanilla";
@@ -269,6 +271,20 @@ public class OrdersController implements Initializable {
 
     public void Exit(ActionEvent actionEvent) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("Customer.fxml"));
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) ButtonExit.getScene().getWindow();
+        stage.setScene(scene);
+    }
+
+    public void OrderStatus(ActionEvent actionEvent) throws Exception{
+        Parent root = FXMLLoader.load(getClass().getResource("OrderStatus.fxml"));
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) ButtonExit.getScene().getWindow();
+        stage.setScene(scene);
+    }
+
+    public void BillStatus(ActionEvent actionEvent) throws Exception{
+        Parent root = FXMLLoader.load(getClass().getResource("BillStatus.fxml"));
         Scene scene = new Scene(root);
         Stage stage = (Stage) ButtonExit.getScene().getWindow();
         stage.setScene(scene);

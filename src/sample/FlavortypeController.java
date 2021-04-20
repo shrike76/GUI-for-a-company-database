@@ -140,5 +140,4 @@ public class FlavortypeController implements Initializable {
         Stage stage = (Stage) ButtonExit.getScene().getWindow();
         stage.setScene(scene);
     }
-
 }

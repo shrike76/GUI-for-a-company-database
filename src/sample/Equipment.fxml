@@ -13,13 +13,14 @@
     <Button layoutX="31.0" layoutY="341.0" mnemonicParsing="false" onAction="#Add" text="Create" />
     <Button layoutX="235.0" layoutY="341.0" mnemonicParsing="false" onAction="#Update" text="Update" />
     <Button fx:id="ButtonExit" layoutX="455.0" layoutY="341.0" mnemonicParsing="false" onAction="#Exit" text="Exit" />
-    <TextField fx:id="ToppingTextField" layoutX="637.0" layoutY="26.0" />
-    <TextField fx:id="ToppingPriceTextField" layoutX="637.0" layoutY="63.0" />
+    <TextField fx:id="EquipmentTypeTextField" layoutX="637.0" layoutY="26.0" />
+    <TextField fx:id="EquipmentNameTextField" layoutX="637.0" layoutY="63.0" />
     <Label layoutX="538.0" layoutY="30.0" text="Equipment Type" />
     <Label layoutX="538.0" layoutY="67.0" text="Equipment Name" />
    <Label layoutX="538.0" layoutY="106.0" text="Equipment Price" />
-   <TextField fx:id="ToppingPriceTextField1" layoutX="637.0" layoutY="102.0" />
-    <CheckBox fx:id="IsActiveCheckbox" layoutX="637.0" layoutY="195.0" mnemonicParsing="false" selected="true" text="Is Active" />
+   <TextField fx:id="EquipmentPriceTextField" layoutX="637.0" layoutY="102.0" />
+    <CheckBox fx:id="IsActiveCheckbox" layoutX="722.0" layoutY="345.0" mnemonicParsing="false" selected="true" text="Is Active" />
    <ComboBox fx:id="EquipmentConditionComboBox" layoutX="687.0" layoutY="147.0" prefHeight="25.0" prefWidth="100.0" />
    <Label layoutX="538.0" layoutY="151.0" text="Equipment Condition" />
+   <Button fx:id="EquipmentConditionButton" layoutX="538.0" layoutY="341.0" mnemonicParsing="false" onAction="#EquipmentCondition" text="Equipment Condition" />
 </AnchorPane>

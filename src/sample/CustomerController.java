@@ -222,7 +222,7 @@ public class CustomerController implements Initializable {
             pstmt6.setInt(1, GetID(StreetComboBox.getValue().toString()));
             pstmt6.executeUpdate();
         }
-        //fix this
+
         PreparedStatement pstmt7 = conn.prepareStatement("UPDATE CustomerStatus SET customer_status = ? WHERE customerid = " + id1);
         pstmt7.setString(1, IsActiveCheckbox.isSelected() ? "true":"false");
         pstmt7.executeUpdate();

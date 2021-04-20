@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="406.0" prefWidth="811.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.StreetListController">
+    <TableView fx:id="tv1" layoutX="14.0" layoutY="14.0" prefHeight="290.0" prefWidth="496.0" />
+    <Button layoutX="31.0" layoutY="341.0" mnemonicParsing="false" onAction="#Add" text="Create" />
+    <Button layoutX="235.0" layoutY="341.0" mnemonicParsing="false" onAction="#Update" text="Update" />
+    <Button fx:id="ButtonExit" layoutX="455.0" layoutY="341.0" mnemonicParsing="false" onAction="#Exit" text="Exit" />
+    <TextField fx:id="StatusTextfield" layoutX="628.0" layoutY="26.0" />
+    <CheckBox fx:id="IsActiveCheckbox" layoutX="712.0" layoutY="358.0" mnemonicParsing="false" selected="true" text="Is Active" />
+    <Label layoutX="538.0" layoutY="30.0" text="Street" />
+</AnchorPane>

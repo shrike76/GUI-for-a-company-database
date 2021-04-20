@@ -8,28 +8,34 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="406.0" prefWidth="811.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.EmployeeController">
+<AnchorPane prefHeight="468.0" prefWidth="811.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.EmployeeController">
     <TableView fx:id="tv1" layoutX="14.0" layoutY="14.0" prefHeight="290.0" prefWidth="496.0" />
     <Button layoutX="31.0" layoutY="341.0" mnemonicParsing="false" onAction="#Add" text="Create" />
     <Button layoutX="235.0" layoutY="341.0" mnemonicParsing="false" onAction="#Update" text="Update" />
-    <Button fx:id="ButtonExit" layoutX="455.0" layoutY="341.0" mnemonicParsing="false" onAction="#Exit" text="Exit" />
+    <Button fx:id="ButtonExit" layoutX="475.0" layoutY="341.0" mnemonicParsing="false" onAction="#Exit" text="Exit" />
     <TextField fx:id="FirstNameTextField" layoutX="628.0" layoutY="26.0" />
     <TextField fx:id="LastNameTextField" layoutX="628.0" layoutY="63.0" />
     <Label layoutX="534.0" layoutY="30.0" text="First Name" />
-    <Label layoutX="535.0" layoutY="67.0" text="Last Name" />
+    <Label layoutX="533.0" layoutY="67.0" text="Last Name" />
     <Label layoutX="533.0" layoutY="104.0" text="Phone" />
     <TextField fx:id="PhoneTextField" layoutX="629.0" layoutY="100.0" />
     <TextField fx:id="EmailTextField" layoutX="629.0" layoutY="139.0" />
-    <Label layoutX="535.0" layoutY="143.0" text="Email" />
-    <Label layoutX="536.0" layoutY="180.0" text="Country" />
-    <Label layoutX="536.0" layoutY="216.0" text="State" />
-    <Label layoutX="537.0" layoutY="253.0" text="City" />
-    <Label layoutX="536.0" layoutY="287.0" text="Zipcode" />
-    <Label layoutX="534.0" layoutY="324.0" text="Street" />
-    <ComboBox fx:id="CountryComboBox" layoutX="629.0" layoutY="176.0" prefWidth="150.0" />
-    <ComboBox fx:id="StateComboBox" layoutX="629.0" layoutY="212.0" prefWidth="150.0" />
-    <ComboBox fx:id="CityComboBox" layoutX="628.0" layoutY="249.0" prefWidth="150.0" />
-    <ComboBox fx:id="ZipcodeComboBox" layoutX="628.0" layoutY="283.0" prefWidth="150.0" />
-    <ComboBox fx:id="StreetComboBox" layoutX="628.0" layoutY="320.0" prefWidth="150.0" />
-    <CheckBox fx:id="IsActiveCheckbox" layoutX="638.0" layoutY="358.0" mnemonicParsing="false" selected="true" text="Is Active" />
+    <Label layoutX="532.0" layoutY="143.0" text="Email" />
+    <Label layoutX="535.0" layoutY="256.0" text="Country" />
+    <Label layoutX="535.0" layoutY="292.0" text="State" />
+    <Label layoutX="536.0" layoutY="329.0" text="City" />
+    <Label layoutX="535.0" layoutY="363.0" text="Zipcode" />
+    <Label layoutX="533.0" layoutY="400.0" text="Street" />
+   <TextField fx:id="UsernameTextField" layoutX="629.0" layoutY="175.0" />
+   <TextField fx:id="PasswordTextField" layoutX="629.0" layoutY="213.0" />
+    <ComboBox fx:id="CountryComboBox" layoutX="628.0" layoutY="252.0" prefWidth="150.0" />
+    <ComboBox fx:id="StateComboBox" layoutX="628.0" layoutY="288.0" prefWidth="150.0" />
+    <ComboBox fx:id="CityComboBox" layoutX="627.0" layoutY="325.0" prefWidth="150.0" />
+    <ComboBox fx:id="ZipcodeComboBox" layoutX="627.0" layoutY="359.0" prefWidth="150.0" />
+    <ComboBox fx:id="StreetComboBox" layoutX="627.0" layoutY="396.0" prefWidth="150.0" />
+    <CheckBox fx:id="IsActiveCheckbox" layoutX="713.0" layoutY="434.0" mnemonicParsing="false" selected="true" text="Is Active" />
+   <Button fx:id="AdminLoginButton" layoutX="345.0" layoutY="343.0" mnemonicParsing="false" onAction="#Admin" text="Admin Login" />
+   <Button fx:id="CertificateButton" layoutX="627.0" layoutY="430.0" mnemonicParsing="false" onAction="#EmployeeCertificate" text="Certificates" />
+   <Label layoutX="530.0" layoutY="179.0" text="Username" />
+   <Label layoutX="532.0" layoutY="217.0" text="Password" />
 </AnchorPane>
