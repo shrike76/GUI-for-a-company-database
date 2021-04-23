@@ -181,7 +181,7 @@ public class CustomerController implements Initializable {
             pstmt4.executeUpdate();
 
             PreparedStatement pstmt5 = conn.prepareStatement("INSERT INTO Reservation(reservationstatusid, customerid, reservation_date) Values (?,?,?)");
-            pstmt5.setInt(1, PremiumCheckbox.isSelected() ? 1:5);
+            pstmt5.setInt(1, ReservationCheckbox.isSelected() ? 1:2);
             pstmt5.setInt(2, ID2);
             pstmt5.setDate(3, java.sql.Date.valueOf(java.time.LocalDate.now()));
             pstmt5.executeUpdate();
@@ -254,7 +254,7 @@ public class CustomerController implements Initializable {
         pstmt8.executeUpdate();
 
         PreparedStatement pstmt9 = conn.prepareStatement("UPDATE Reservation SET reservationstatusid = ?, reservation_date = ? WHERE reservationid = " + id4);
-        pstmt9.setInt(1, PremiumCheckbox.isSelected() ? 1:5);
+        pstmt9.setInt(1, ReservationCheckbox.isSelected() ? 1:2);
         pstmt9.setDate(2, java.sql.Date.valueOf(java.time.LocalDate.now()));
         pstmt9.executeUpdate();
 
